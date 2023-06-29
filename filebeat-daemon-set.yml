@@ -7,7 +7,7 @@ metadata:
     k8s-app: filebeat
 
 ---
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: filebeat
@@ -24,7 +24,7 @@ rules:
   - list
   
 ---
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
   name: filebeat
@@ -106,7 +106,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
       - name: filebeat
-        image: docker.elastic.co/beats/filebeat:8.8.2
+        image: docker.elastic.co/beats/filebeat:6.3.0
         args: [
           "-c", "/etc/filebeat.yml",
           "-e",
