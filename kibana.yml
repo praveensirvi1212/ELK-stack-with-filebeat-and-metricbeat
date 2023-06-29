@@ -5,6 +5,8 @@ metadata:
   namespace: kube-system
   labels:
     k8s-app: kibana-logging
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: Reconcile
 spec:
   replicas: 1
   selector:
@@ -14,10 +16,18 @@ spec:
     metadata:
       labels:
         k8s-app: kibana-logging
+      annotations:
+        seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
     spec:
       containers:
       - name: kibana-logging
-        image: docker.elastic.co/kibana/kibana-oss:7.10.0
+        image: docker.elastic.co/kibana/kibana-oss:6.2.4
+        resources:
+          # need more cpu upon initialization, therefore burstable class
+          limits:
+            cpu: 1000m
+          requests:
+            cpu: 100m
         env:
           - name: ELASTICSEARCH_URL
             value: http://elasticsearch-logging:9200
@@ -25,12 +35,6 @@ spec:
         - containerPort: 5601
           name: ui
           protocol: TCP
-        resources:
-          # need more cpu upon initialization, therefore burstable class
-          limits:
-            cpu: 1000m
-          requests:
-            cpu: 100m
 ---
 apiVersion: v1
 kind: Service
@@ -39,6 +43,8 @@ metadata:
   namespace: kube-system
   labels:
     k8s-app: kibana-logging
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: Reconcile
     kubernetes.io/name: "Kibana"
 spec:
   type: NodePort
@@ -46,6 +52,25 @@ spec:
   - port: 5601
     protocol: TCP
     targetPort: ui
-    nodePort: 30035
+    nodePort: 31336
   selector:
     k8s-app: kibana-logging
+# ---
+# apiVersion: extensions/v1beta1
+# kind: Ingress
+# metadata:
+#   name: logs-ingress
+#   namespace: kube-system
+#   labels:
+#     app: logs
+#   annotations:
+#     kubernetes.io/ingress.class: traefik
+# spec:
+#   rules:
+#   - host: logs.example.com
+#     http:
+#       paths:
+#       - path: /
+#         backend:
+#           serviceName: kibana-logging
+#           servicePort: 5601
