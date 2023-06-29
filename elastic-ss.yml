@@ -1,3 +1,4 @@
+# RBAC authn and authz
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -45,6 +46,7 @@ roleRef:
   name: elasticsearch-logging
   apiGroup: ""
 ---
+# Elasticsearch deployment itself
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -73,7 +75,7 @@ spec:
     spec:
       serviceAccountName: elasticsearch-logging
       containers:
-      - image: docker.elastic.co/elasticsearch/elasticsearch:8.2.3
+      - image: k8s.gcr.io/elasticsearch:v6.2.4
         name: elasticsearch-logging
         resources:
           # need more cpu upon initialization, therefore burstable class
