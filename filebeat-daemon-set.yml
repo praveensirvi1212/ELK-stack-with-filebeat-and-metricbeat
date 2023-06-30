@@ -111,19 +111,6 @@ spec:
           "-c", "/etc/filebeat.yml",
           "-e",
         ]
-        env:
-        - name: ELASTICSEARCH_HOST
-          value: elasticsearch-logging
-        - name: ELASTICSEARCH_PORT
-          value: "9200"
-        - name: ELASTICSEARCH_USERNAME
-          value: elastic
-        - name: ELASTICSEARCH_PASSWORD
-          value: changeme
-        - name: ELASTIC_CLOUD_ID
-          value:
-        - name: ELASTIC_CLOUD_AUTH
-          value:
         securityContext:
           runAsUser: 0
         resources:
